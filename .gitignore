@@ -1,0 +1,13 @@
+# Môi trường ảo
+venv/
+env/
+
+# Biến môi trường
+.env
+.env.*
+
+# Rác của Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
