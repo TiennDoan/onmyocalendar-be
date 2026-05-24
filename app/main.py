@@ -24,5 +24,5 @@ app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(calendar.router, prefix="/calendar", tags=["Calendar"]) 
 
 @app.get("/")
-def root():
-    return {"message": "Backend FastAPI đang chạy ổn định!"}
+def keep_alive():
+    return {"status": "Server is awake!"}

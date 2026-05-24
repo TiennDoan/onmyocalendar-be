@@ -94,7 +94,7 @@ def callback(request: Request):
                 try {
                     if (window.opener) {
                         // Bắn tin nhắn về React
-                        window.opener.postMessage("login_success", "https://onmyocalendar-be-api.onrender.com");
+                        window.opener.postMessage("login_success", ""https://onmyocalendar.github.io"");
                         // Tự đóng cửa sổ
                         window.close();
                     } else {
