@@ -11,7 +11,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173", # Nếu bạn dùng Vite
         "http://localhost:3000", # Nếu bạn dùng Create React App
-        "http://127.0.0.1:5173"
+        "http://127.0.0.1:5173",
+        "https://onmyocalendar-be-api.onrender.com",
+        "https://onmyocalendar.github.io"
     ],
     allow_credentials=True,      # BẮT BUỘC TRUE: Để cho phép nhận Cookie từ Frontend
     allow_methods=["*"],         # Cho phép tất cả các method (GET, POST, OPTIONS...)
