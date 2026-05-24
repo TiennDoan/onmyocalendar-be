@@ -18,8 +18,9 @@ class BossSchedulePayload(BaseModel):
 
 @router.post("/create-boss-schedule")
 def create_boss_schedule(payload: BossSchedulePayload, request: Request):
-    access_token = request.cookies.get("access_token")
-    refresh_token = request.cookies.get("refresh_token")
+    auth_header = request.headers.get("Authorization", "")
+    access_token = auth_header.replace("Bearer ", "") if auth_header else request.cookies.get("access_token")
+    refresh_token = request.headers.get("X-Refresh-Token") or request.cookies.get("refresh_token")
 
     if not access_token:
         raise HTTPException(status_code=401, detail="Bạn chưa đăng nhập Google")
@@ -72,7 +73,6 @@ def create_boss_schedule(payload: BossSchedulePayload, request: Request):
 
         batch = service.new_batch_http_request(callback=batch_callback)
 
-        # 3. Vòng lặp
         for i in range(total_days):
             current_date = start_date + timedelta(days=i)
             date_str = current_date.strftime("%Y-%m-%d")

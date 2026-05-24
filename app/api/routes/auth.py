@@ -4,6 +4,7 @@ from fastapi.responses import RedirectResponse, HTMLResponse
 from google_auth_oauthlib.flow import Flow
 from app.core.config import settings
 import uuid # 
+import json
 
 os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
 
@@ -75,50 +76,32 @@ def callback(request: Request):
     
     flow.fetch_token(authorization_response=str(request.url))
     credentials = flow.credentials
-    
-    html_content = """
+
+    token_data = {
+        "access_token": credentials.token,
+        "refresh_token": credentials.refresh_token or ""
+    }
+
+    token_json = json.dumps(token_data)
+    html_content = f"""
     <html>
         <head><title>Đăng nhập thành công</title></head>
         <body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
             <h3 style="color: #475569;">Đang kết nối lại ứng dụng...</h3>
             <script>
-                // Đảm bảo script chạy an toàn
-                try {
-                    if (window.opener) {
-                        // Bắn tin nhắn về React
-                        window.opener.postMessage("login_success", "https://onmyocalendar.github.io");
-                        // Tự đóng cửa sổ
+                try {{
+                    if (window.opener) {{
+                        window.opener.postMessage({token_json}, "https://onmyocalendar.github.io");
                         window.close();
-                    } else {
-                        document.body.innerHTML += "<p style='color:red;'>Lỗi: Trình duyệt chặn giao tiếp. Vui lòng tự tắt cửa sổ này.</p>";
-                    }
-                } catch(e) {
+                    }} else {{
+                        document.body.innerHTML += "<p style='color:red;'>Lỗi: Trình duyệt chặn giao tiếp.</p>";
+                    }}
+                }} catch(e) {{
                     console.error(e);
-                }
+                }}
             </script>
         </body>
     </html>
     """
     
-    response = HTMLResponse(content=html_content)
-
-    response.set_cookie(
-        key="access_token", 
-        value=credentials.token, 
-        httponly=True, 
-        max_age=3600, 
-        samesite="none",   
-        secure=True,      
-        path="/"
-    )
-    
-    response.set_cookie(
-        key="refresh_token", 
-        value=credentials.refresh_token, 
-        httponly=True,
-        samesite="none",   
-        secure=True,       
-        path="/" 
-    )
-    
-    return response
+    return HTMLResponse(content=html_content)
